@@ -25,24 +25,56 @@ final class MyJSON implements JSON {
   @Override
   public JSON getObject(String name) {
     // TODO: implement this
-	  return null;
+	  // if MyPairs contains a value matching this key...
+	  if (myPairs.containsKey(name)) {
+		  // if the value matching the key is a string...
+		  if (myPairs.get(name) instanceof String) {
+			  // the value must be an object
+			  return null;
+		  }
+		  // otherwise it must be a string
+		  else {
+			  return (JSON)myPairs.get(name);
+		  }
+	  }
+	  // if not, there aren't any objects here
+	  else {
+		  return null;
+	  }
   }
 
   @Override
   public JSON setObject(String name, JSON value) {
     // TODO: implement this
+	  myPairs.replace(name, value);
     return this;
   }
 
   @Override
   public String getString(String name) {
     // TODO: implement this
-    return null;
+	// if MyPairs contains a value matching this key..
+	  if (myPairs.containsKey(name)) {
+		// if the value matching the key is a string...
+		  if (myPairs.get(name) instanceof String) {
+			  // return the string
+			  return (String)myPairs.get(name);
+		  }
+		// otherwise it must be an object
+		  else {
+			  return null;
+		  }
+	  }
+	// if not, there aren't any strings here
+	  else {
+		  return null;
+	  }
   }
 
   @Override
   public JSON setString(String name, String value) {
     // TODO: implement this
+	  myPairs.replace(name, value);
     return this;
   }
 
