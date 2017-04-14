@@ -15,12 +15,32 @@
 package com.google.codeu.codingchallenge;
 
 import java.io.IOException;
+import java.util.Scanner;
+import java.util.Stack;
 
 final class MyJSONParser implements JSONParser {
 
+	// the provided string in stack form
+    private Stack<Object> inputStringStack;
+    
   @Override
   public JSON parse(String in) throws IOException {
     // TODO: implement this
-    return new MyJSON();
+	  
+	  // new empty MyJSON
+	  MyJSON newJSON = new MyJSON();
+	  
+	  // scanner used for going through input string
+	  Scanner inputStringScanner = new Scanner(in);
+	  inputStringScanner = inputStringScanner.useDelimiter("\\s*");
+	  
+	  // temporary strings used for object creation
+	  
+	  if (inputStringScanner.hasNext()){
+          String aToken = inputStringScanner.next();
+          char item = aToken.charAt(0);
+	  }
+    return newJSON;
   }
+  
 }

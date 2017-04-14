@@ -46,7 +46,17 @@ final class MyJSON implements JSON {
   @Override
   public JSON setObject(String name, JSON value) {
     // TODO: implement this
-	  myPairs.replace(name, value);
+	  if (myPairs.containsKey(name)) {
+		  if (myPairs.get(name) instanceof String) {
+			  // it's not an object
+		  }
+		  else {
+			  myPairs.replace(name, value);
+		  }
+	  }
+	  else {
+		  myPairs.put(name, value);
+	  }
     return this;
   }
 
@@ -74,7 +84,17 @@ final class MyJSON implements JSON {
   @Override
   public JSON setString(String name, String value) {
     // TODO: implement this
-	  myPairs.replace(name, value);
+	  if (myPairs.containsKey(name)) {
+		  if (myPairs.get(name) instanceof String) {
+			  myPairs.replace(name, value);
+		  }
+		  else {
+			  // it's not a string
+		  }
+	  }
+	  else {
+		  myPairs.put(name, value);
+	  }
     return this;
   }
 
