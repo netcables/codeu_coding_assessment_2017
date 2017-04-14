@@ -15,13 +15,17 @@
 package com.google.codeu.codingchallenge;
 
 import java.util.Collection;
+import java.util.HashMap;
 
 final class MyJSON implements JSON {
-
+	
+	// HashMap containing keys and values (with values being either MyJSON or Strings).
+	private HashMap<String, Object> myPairs = new HashMap<String, Object>();
+	
   @Override
   public JSON getObject(String name) {
     // TODO: implement this
-    return null;
+	  return null;
   }
 
   @Override
