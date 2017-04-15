@@ -24,7 +24,30 @@ final class MyJSONParser implements JSONParser {
   @Override
   public JSON parse(String in) throws IOException {
     // TODO: implement this
-    return null;
+	  System.out.println(in);
+	  MyJSON newJSON = new MyJSON();
+	  
+	  Pattern quotePattern = Pattern.compile("\"([^\"]*)\"");
+	  Matcher quoteMatcher = quotePattern.matcher(in);
+	  
+	  String newKey = new String("");
+	  String newValue = new String("");
+	  
+	  while(quoteMatcher.find()) {
+		  if(newKey.equals("")) {
+			  newKey = quoteMatcher.group(1);
+			  System.out.println(newKey);
+		  }
+		  else if(newValue.equals("")) {
+			  newValue = quoteMatcher.group(1);
+			  System.out.println(newValue);
+		  }
+		  else {
+			  newJSON.setString(newKey, newValue);
+			  newKey = "";
+			  newValue = "";
+		  }
+	  }
+    return newJSON;
   }
-  
 }

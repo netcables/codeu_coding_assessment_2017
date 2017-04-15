@@ -33,15 +33,21 @@ final class MyJSON implements JSON {
 		  return objectMap.get(name);
 	  }
 	  else {
-		  throw new RuntimeException("The object \"" + name + "\" was not found in " + this + "!");
+		  throw new RuntimeException("The object \"" + name + "\" was not found!");
 	  }
   }
 
   @Override
   public JSON setObject(String name, JSON value) {
     // TODO: implement this
-	objectMap.replace(name, value);
-    return this;
+	  if (objectMap.containsKey(name)) {
+		  objectMap.replace(name, value);
+	  }
+	  else {
+
+		  objectMap.put(name, value);
+	  }
+	    return this;
   }
 
   @Override
@@ -51,14 +57,20 @@ final class MyJSON implements JSON {
 		  return stringMap.get(name);
 	  }
 	  else {
-		  throw new RuntimeException("The string \"" + name + "\" was not found in " + this + "!");
+		  throw new RuntimeException("The string \"" + name + "\" was not found!");
 	  }
   }
 
   @Override
   public JSON setString(String name, String value) {
     // TODO: implement this
-		stringMap.replace(name, value);
+	  if (stringMap.containsKey(name)) {
+		  stringMap.replace(name, value);
+	  }
+	  else {
+		  // if the key for this string doesn't already exist, add it
+		  stringMap.put(name, value);
+	  }
 	    return this;
   }
 
