@@ -28,61 +28,57 @@ final class MyJSON implements JSON {
 	
   @Override
   public JSON getObject(String name) {
-    // TODO: implement this
+	  // if the object isn't in this object, state that it wasn't found
 	  if (objectMap.containsKey(name)) {
 		  return objectMap.get(name);
 	  }
 	  else {
-		  throw new RuntimeException("The object \"" + name + "\" was not found!");
+		  throw new NullPointerException("The object \"" + name + "\" was not found!");
 	  }
   }
 
   @Override
   public JSON setObject(String name, JSON value) {
-    // TODO: implement this
+	  // if the key for this object doesn't already exist, add it
 	  if (objectMap.containsKey(name)) {
 		  objectMap.replace(name, value);
 	  }
 	  else {
-
 		  objectMap.put(name, value);
 	  }
-	    return this;
+	  return this;
   }
 
   @Override
   public String getString(String name) {
-    // TODO: implement this
+	  // if the string isn't in this object, state that it wasn't found
 	  if (stringMap.containsKey(name)) {
 		  return stringMap.get(name);
 	  }
 	  else {
-		  throw new RuntimeException("The string \"" + name + "\" was not found!");
+		  throw new NullPointerException("The string \"" + name + "\" was not found!");
 	  }
   }
 
   @Override
   public JSON setString(String name, String value) {
-    // TODO: implement this
+	  // if the key for this string doesn't already exist, add it
 	  if (stringMap.containsKey(name)) {
 		  stringMap.replace(name, value);
 	  }
 	  else {
-		  // if the key for this string doesn't already exist, add it
 		  stringMap.put(name, value);
 	  }
-	    return this;
+	  return this;
   }
 
   @Override
   public void getObjects(Collection<String> names) {
-    // TODO: implement this
 	  names = objectMap.keySet();
   }
 
   @Override
   public void getStrings(Collection<String> names) {
-    // TODO: implement this
 	  names = stringMap.keySet();
   }
 }

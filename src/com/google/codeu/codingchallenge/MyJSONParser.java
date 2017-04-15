@@ -36,11 +36,9 @@ final class MyJSONParser implements JSONParser {
 	  while(quoteMatcher.find()) {
 		  if(newKey.equals("")) {
 			  newKey = quoteMatcher.group(1);
-			  System.out.println(newKey);
 		  }
 		  else if(newValue.equals("")) {
 			  newValue = quoteMatcher.group(1);
-			  System.out.println(newValue);
 		  }
 		  else {
 			  newJSON.setString(newKey, newValue);
@@ -48,6 +46,9 @@ final class MyJSONParser implements JSONParser {
 			  newValue = "";
 		  }
 	  }
+	newJSON.setString(newKey, newValue);
+	newKey = "";
+	newValue = "";
     return newJSON;
   }
 }
