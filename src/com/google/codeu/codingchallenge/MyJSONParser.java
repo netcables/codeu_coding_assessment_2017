@@ -39,6 +39,24 @@ final class MyJSONParser implements JSONParser {
 	  if (inputStringScanner.hasNext()){
           String aToken = inputStringScanner.next();
           char item = aToken.charAt(0);
+          
+          switch(item) {
+          	// new MyJSON object created
+          	case '{':
+          		break;
+          	// new MyJSON object completed
+          	case '}':
+          		break;
+          	// start of string
+          	case '\"':
+          		break;
+          	// value for given key
+          	case ':':
+          		break;
+          	// next key-value pair
+          	case ',':
+          		break;         		
+          }
 	  }
     return newJSON;
   }

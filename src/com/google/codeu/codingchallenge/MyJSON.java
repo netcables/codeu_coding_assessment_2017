@@ -16,86 +16,50 @@ package com.google.codeu.codingchallenge;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 final class MyJSON implements JSON {
 	
-	// HashMap containing keys and values (with values being either MyJSON or Strings).
-	private HashMap<String, Object> myPairs = new HashMap<String, Object>();
+	// HashMap containing JSON-lite strings
+	private Map<String, String> stringMap = new HashMap<>();
+	
+	// HashMap containing JSON-lite objects
+	private Map<String, JSON> objectMap = new HashMap<>();
 	
   @Override
   public JSON getObject(String name) {
     // TODO: implement this
-	  // if MyPairs contains a value matching this key...
-	  if (myPairs.containsKey(name)) {
-		  // if the value matching the key is a string...
-		  if (myPairs.get(name) instanceof String) {
-			  // the value must be an object
-			  return null;
-		  }
-		  // otherwise it must be a string
-		  else {
-			  return (JSON)myPairs.get(name);
-		  }
+	  if (objectMap.containsKey(name)) {
+		  return objectMap.get(name);
 	  }
-	  // if not, there aren't any objects here
 	  else {
-		  return null;
+		  throw new RuntimeException("The object \"" + name + "\" was not found in " + this + "!");
 	  }
   }
 
   @Override
   public JSON setObject(String name, JSON value) {
     // TODO: implement this
-	  if (myPairs.containsKey(name)) {
-		  if (myPairs.get(name) instanceof String) {
-			  // it's not an object
-		  }
-		  else {
-			  myPairs.replace(name, value);
-		  }
-	  }
-	  else {
-		  myPairs.put(name, value);
-	  }
+	objectMap.replace(name, value);
     return this;
   }
 
   @Override
   public String getString(String name) {
     // TODO: implement this
-	// if MyPairs contains a value matching this key..
-	  if (myPairs.containsKey(name)) {
-		// if the value matching the key is a string...
-		  if (myPairs.get(name) instanceof String) {
-			  // return the string
-			  return (String)myPairs.get(name);
-		  }
-		// otherwise it must be an object
-		  else {
-			  return null;
-		  }
+	  if (stringMap.containsKey(name)) {
+		  return stringMap.get(name);
 	  }
-	// if not, there aren't any strings here
 	  else {
-		  return null;
+		  throw new RuntimeException("The string \"" + name + "\" was not found in " + this + "!");
 	  }
   }
 
   @Override
   public JSON setString(String name, String value) {
     // TODO: implement this
-	  if (myPairs.containsKey(name)) {
-		  if (myPairs.get(name) instanceof String) {
-			  myPairs.replace(name, value);
-		  }
-		  else {
-			  // it's not a string
-		  }
-	  }
-	  else {
-		  myPairs.put(name, value);
-	  }
-    return this;
+		stringMap.replace(name, value);
+	    return this;
   }
 
   @Override
