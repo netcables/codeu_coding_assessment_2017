@@ -15,50 +15,16 @@
 package com.google.codeu.codingchallenge;
 
 import java.io.IOException;
-import java.util.Scanner;
-import java.util.Stack;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 final class MyJSONParser implements JSONParser {
 
-	// the provided string in stack form
-    private Stack<Object> inputStringStack;
     
   @Override
   public JSON parse(String in) throws IOException {
     // TODO: implement this
-	  
-	  // new empty MyJSON
-	  MyJSON newJSON = new MyJSON();
-	  
-	  // scanner used for going through input string
-	  Scanner inputStringScanner = new Scanner(in);
-	  inputStringScanner = inputStringScanner.useDelimiter("\\s*");
-	  
-	  // temporary strings used for object creation
-	  
-	  if (inputStringScanner.hasNext()){
-          String aToken = inputStringScanner.next();
-          char item = aToken.charAt(0);
-          
-          switch(item) {
-          	// new MyJSON object created
-          	case '{':
-          		break;
-          	// new MyJSON object completed
-          	case '}':
-          		break;
-          	// start of string
-          	case '\"':
-          		break;
-          	// value for given key
-          	case ':':
-          		break;
-          	// next key-value pair
-          	case ',':
-          		break;         		
-          }
-	  }
-    return newJSON;
+    return null;
   }
   
 }

@@ -65,10 +65,12 @@ final class MyJSON implements JSON {
   @Override
   public void getObjects(Collection<String> names) {
     // TODO: implement this
+	  names = objectMap.keySet();
   }
 
   @Override
   public void getStrings(Collection<String> names) {
     // TODO: implement this
+	  names = stringMap.keySet();
   }
 }
