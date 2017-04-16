@@ -45,7 +45,7 @@ final class MyJSON implements JSON {
 	  }
 	  else {
 		  objectMap.put(name, value);
-		  System.out.println("The nested object was stored under the name \"" + name + "\"!");
+		  //System.out.println("The nested object was stored under the name \"" + name + "\"!");
 	  }
 	  return this;
   }
@@ -69,7 +69,7 @@ final class MyJSON implements JSON {
 	  }
 	  else {
 		  stringMap.put(name, value);
-		  System.out.println("The string \"" + value + "\" was stored under the name \"" + name + "\"!");
+		  //System.out.println("The string \"" + value + "\" was stored under the name \"" + name + "\"!");
 	  }
 	  return this;
   }

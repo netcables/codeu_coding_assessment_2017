@@ -25,18 +25,19 @@ final class MyJSONParser implements JSONParser {
   @Override
   public JSON parse(String in) throws IOException {
 	
-	// JSON object to be returned
+	// new MyJSON object
 	MyJSON returnJSON = new MyJSON();
 	  
-	// boolean used to check if within quotes
+	// boolean used to check if character is within quotes
 	boolean withinQuotes = false;
 	
-	// boolean used to check escape characters
+	// boolean used to check escaped characters
 	boolean escapeChar = false;
 	
-	// temporary string used to hold string values
+	// temporary string used to hold extracted string values
 	String tempString = new String();
 	
+	// go through input string character by character
 	for (int i = 0; i < in.length(); i++) {
 		if (withinQuotes == false) {
 			// switch for text outside of quotes
@@ -44,42 +45,43 @@ final class MyJSONParser implements JSONParser {
 				case '"':
 					withinQuotes = true;
 					break;
-				// if opening bracket, push into stack
 				case '{':
 					inputStringStack.push(String.valueOf('{'));
 					break;
-				// if closing bracket, evaluate stack until '{'
+				// evaluate up to first '{' found in stack if '}' is found in string
 				case '}':
 					evaluate();
 					break;
-				// if colon, push into stack
 				case ':':
 					inputStringStack.push(String.valueOf(':'));
 					break;
-				// if comma, push into stack
 				case ',':
 					inputStringStack.push(String.valueOf(','));
 					break;
+				// the number of whitespace characters outside of quotes doesn't matter
 				case ' ':
 					break;
-				// there shouldn't be anything else outside of quotes
+				// there shouldn't be any other characters outside of quotes
 				default:
-					  throw new RuntimeException("String formatted incorrectly!");
+					  throw new IOException("Invalid string!");
 			}
 		}
 		else {
 			if(escapeChar == false) {
 				// switch for text inside of quotes (no escaped characters)
 				switch(in.charAt(i)) {
-					case '"':
+					// if '"', push completed tempString into stack
+					case '\"':
 						withinQuotes = false;
 						inputStringStack.push(tempString);
 						tempString = new String();
 						break;
+					// if '\', treat next character as escaped character
 					case '\\':
 						tempString += in.charAt(i);
 						escapeChar = true;
 						break;
+					// otherwise add the character to tempString
 					default:
 						if (withinQuotes == true) {
 							tempString += in.charAt(i);
@@ -90,6 +92,7 @@ final class MyJSONParser implements JSONParser {
 			else {
 				// switch for text inside of quotes (escaped characters)
 				switch(in.charAt(i)) {
+					// if character can be escaped, add it to tempString
 					case '\"':
 					case '\\':
 					case 't':
@@ -97,31 +100,44 @@ final class MyJSONParser implements JSONParser {
 						tempString += in.charAt(i);
 						escapeChar = false;
 						break;
+					// if character can't be escaped, throw exception
 					default:
-						  throw new RuntimeException("Character escaped incorrectly!");
+						throw new IOException("Invalid escape sequence!");
 				}
 			}
 		}
 	}
 	// resulting MyJSON should be the last object in the stack
-	returnJSON = (MyJSON)inputStringStack.pop();
-	return returnJSON;
+	if (inputStringStack.size() == 1) {
+		returnJSON = (MyJSON)inputStringStack.pop();
+		return returnJSON;
+	}
+	else {
+		throw new IOException("Stack is not empty!");
+	}
   }
   
-  private void evaluate() {
-	  // new myJSON object
+  private void evaluate() throws IOException {
+	  
+	  // new myJSON object that will be added to stack
 	  MyJSON newJSON = new MyJSON();
-	  // temporary JSON object
+	  
+	  // temporary JSON object used for string-object pairs
 	  MyJSON tempJSON = new MyJSON();
-	  // temporary value string
+	  
+	  // temporary value string used for string-string pairs
 	  String newValue = new String();
+	  
 	  // temporary key string
 	  String newKey = new String();
-	  // check if value is object
+	  
+	  // boolean check if value is object
 	  boolean isObject = false;
-	  // check if object is finished
+	  
+	  // boolean to check if object is completed
 	  boolean objectComplete = false;
 	  
+	  // until '{' is found in the stack...
 	  while (objectComplete == false) {
 		  if(inputStringStack.peek() instanceof String) {
 			  // if the top of the stack is an opening bracket, push complete object to stack
@@ -135,6 +151,10 @@ final class MyJSONParser implements JSONParser {
 				  inputStringStack.pop();
 				  newValue = (String)inputStringStack.pop();
 			  }
+			  // if the top of the stack is a colon, something is out of place
+			  else if (inputStringStack.peek().equals(String.valueOf(':'))) {
+					throw new IOException("Colon out of place!");
+			  }
 			  // if the top of the stack is a regular string, create string-string pair
 			  else {
 				  newValue = (String)inputStringStack.pop();
@@ -146,8 +166,15 @@ final class MyJSONParser implements JSONParser {
 			  tempJSON = (MyJSON)inputStringStack.pop();
 		  }
 		  // the next item should be a colon
-		  if(inputStringStack.pop().equals(String.valueOf(':'))) {
+		  if(inputStringStack.peek().equals(String.valueOf(':'))) {
+			  inputStringStack.pop();
 			  newKey = (String)inputStringStack.pop();
+		  }
+		  else if(inputStringStack.peek().equals(String.valueOf('{'))) {
+				throw new IOException("Key-Value pair missing colon!");
+		  }
+		  else if(inputStringStack.peek().equals(String.valueOf(','))) {
+				throw new IOException("Key-Value pair missing colon!");
 		  }
 		  // if the value is a JSON object, setObject
 		  if(isObject == true) {
@@ -158,8 +185,6 @@ final class MyJSONParser implements JSONParser {
 			  newJSON.setString(newKey, newValue);
 		  }
 	  }
-	  // push the new JSON object back into the stack
-	  inputStringStack.push(newJSON);
   }
   
 }
