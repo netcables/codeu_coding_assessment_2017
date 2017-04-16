@@ -63,7 +63,7 @@ final class MyJSONParser implements JSONParser {
 					break;
 				// there shouldn't be any other characters outside of quotes
 				default:
-					  throw new IOException("Invalid string!");
+					  throw new IOException("Invalid character outside of quotes!");
 			}
 		}
 		else {
@@ -107,13 +107,18 @@ final class MyJSONParser implements JSONParser {
 			}
 		}
 	}
+	// if the characters are still inside of quotes, quotation marks are unbalanced
+	if (withinQuotes == true){
+		throw new IOException("Unbalanced quotation marks!");
+	}
 	// resulting MyJSON should be the last object in the stack
 	if (inputStringStack.size() == 1) {
 		returnJSON = (MyJSON)inputStringStack.pop();
 		return returnJSON;
 	}
+	// otherwise statement has unbalanced braces
 	else {
-		throw new IOException("Stack is not empty!");
+		throw new IOException("Unbalanced braces!");
 	}
   }
   
