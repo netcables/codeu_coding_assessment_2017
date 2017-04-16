@@ -17,6 +17,7 @@ package com.google.codeu.codingchallenge;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 final class MyJSON implements JSON {
 	
@@ -42,10 +43,11 @@ final class MyJSON implements JSON {
 	  // if the key for this object doesn't already exist, add it
 	  if (objectMap.containsKey(name)) {
 		  objectMap.replace(name, value);
+		  System.out.println("The value of the object under the name \"" + name + "\" was replaced!");
 	  }
 	  else {
 		  objectMap.put(name, value);
-		  //System.out.println("The nested object was stored under the name \"" + name + "\"!");
+		  System.out.println("The nested object was stored under the name \"" + name + "\"!");
 	  }
 	  return this;
   }
@@ -66,21 +68,30 @@ final class MyJSON implements JSON {
 	  // if the key for this string doesn't already exist, add it
 	  if (stringMap.containsKey(name)) {
 		  stringMap.replace(name, value);
+		  System.out.println("The value of the string under the name \"" + name + "\" was replaced with \"" + value + "\"!");
 	  }
 	  else {
 		  stringMap.put(name, value);
-		  //System.out.println("The string \"" + value + "\" was stored under the name \"" + name + "\"!");
+		  System.out.println("The string \"" + value + "\" was stored under the name \"" + name + "\"!");
 	  }
 	  return this;
   }
 
   @Override
   public void getObjects(Collection<String> names) {
-	  names = objectMap.keySet();
+	  // copy object keySet to collection
+	  Set<String> objectCollection = objectMap.keySet();
+	  for (String objectValue: objectCollection) {
+		  names.add(objectValue);
+	  }
   }
 
   @Override
   public void getStrings(Collection<String> names) {
-	  names = stringMap.keySet();
+	  // copy string keySet to collection
+	  Set<String> stringCollection = stringMap.keySet();
+	  for (String stringValue: stringCollection) {
+		  names.add(stringValue);
+	  }
   }
 }
