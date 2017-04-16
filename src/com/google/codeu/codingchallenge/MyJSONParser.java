@@ -53,19 +53,19 @@ final class MyJSONParser implements JSONParser {
 				}
 			// if opening bracket, push into stack
 			case '{':
-				inputStringStack.push('{');
+				inputStringStack.push(String.valueOf('{'));
 				break;
 			// if closing bracket, evaluate stack until '{'
 			case '}':
-				inputStringStack.push((MyJSON)evaluate());
+				evaluate();
 				break;
 			// if colon, push into stack
 			case ':':
-				inputStringStack.push(':');
+				inputStringStack.push(String.valueOf(':'));
 				break;
 			// if comma, push into stack
 			case ',':
-				inputStringStack.push(',');
+				inputStringStack.push(String.valueOf(','));
 				break;
 			// if in quotes, add char to tempstring
 			default:
@@ -79,8 +79,7 @@ final class MyJSONParser implements JSONParser {
 	return returnJSON;
   }
   
-  private JSON evaluate() {
-	  
+  private void evaluate() {
 	  // new myJSON object
 	  MyJSON newJSON = new MyJSON();
 	  // temporary JSON object
@@ -97,15 +96,25 @@ final class MyJSONParser implements JSONParser {
 	  while (objectComplete == false) {
 		  // the top of the stack should be a value
 		  if(inputStringStack.peek() instanceof String) {
-		  	newValue = (String)inputStringStack.pop();
+			  if(inputStringStack.peek().equals(String.valueOf('{'))) {
+				  objectComplete = true;
+				  inputStringStack.pop();
+				  inputStringStack.push(newJSON);
+			  }
+			  else if(inputStringStack.peek().equals(String.valueOf(','))) {
+				  inputStringStack.pop();
+				  newValue = (String)inputStringStack.pop();
+			  }
+			  else {
+				  newValue = (String)inputStringStack.pop();
+			  }
 		  }
-		  else {
-			  
+		  else {		  
 			  isObject = true;
 			  tempJSON = (MyJSON)inputStringStack.pop();
 		  }
 		  // the next item should be a colon
-		  if((char)inputStringStack.pop() == ':') {
+		  if(inputStringStack.pop().equals(String.valueOf(':'))) {
 			  newKey = (String)inputStringStack.pop();
 		  }
 		  // if the value is a JSON object, setObject
@@ -116,13 +125,7 @@ final class MyJSONParser implements JSONParser {
 		  else {
 			  newJSON.setString(newKey, newValue);
 		  }
-		  if((char)inputStringStack.pop() == '{') {
-			  objectComplete = true;
-		  }
-		  else if ((char)inputStringStack.pop() == ',') {
-			  
-		  }
 	  }
-	return newJSON;
+	  inputStringStack.push(newJSON);
   }
 }
