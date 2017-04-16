@@ -137,23 +137,28 @@ final class MyJSONParser implements JSONParser {
 	  // boolean to check if object is completed
 	  boolean objectComplete = false;
 	  
+	  // check if the object is empty
+	  if (inputStringStack.isEmpty()) {
+			throw new IOException("inputStringStack is empty!");
+	  }
+	  else if(inputStringStack.peek().equals(String.valueOf('{')) && inputStringStack.size() == 1) {
+		  objectComplete = true;
+		  inputStringStack.pop();
+		  inputStringStack.push(newJSON);
+	  }
+	  
 	  // until '{' is found in the stack...
 	  while (objectComplete == false) {
 		  if(inputStringStack.peek() instanceof String) {
-			  // if the top of the stack is an opening bracket, push complete object to stack
-			  if(inputStringStack.peek().equals(String.valueOf('{'))) {
-				  objectComplete = true;
-				  inputStringStack.pop();
-				  inputStringStack.push(newJSON);
+			  // Check if top of stack is something that it shouldn't be
+			  if (inputStringStack.peek().equals(String.valueOf(':'))) {
+					throw new IOException("Colon before closing brace!");
 			  }
-			  // if the top of the stack is a comma, continue adding key-value pairs
-			  else if(inputStringStack.peek().equals(String.valueOf(','))) {
-				  inputStringStack.pop();
-				  newValue = (String)inputStringStack.pop();
+			  if (inputStringStack.peek().equals(String.valueOf(','))) {
+					throw new IOException("Comma before closing brace!");
 			  }
-			  // if the top of the stack is a colon, something is out of place
-			  else if (inputStringStack.peek().equals(String.valueOf(':'))) {
-					throw new IOException("Colon out of place!");
+			  if (inputStringStack.peek().equals(String.valueOf('{'))) {
+					throw new IOException("Opening brace before closing brace!");
 			  }
 			  // if the top of the stack is a regular string, create string-string pair
 			  else {
@@ -166,14 +171,27 @@ final class MyJSONParser implements JSONParser {
 			  tempJSON = (MyJSON)inputStringStack.pop();
 		  }
 		  // the next item should be a colon
-		  if(inputStringStack.peek().equals(String.valueOf(':'))) {
+		  if (inputStringStack.isEmpty() == true) {
+			  throw new IOException("Key-Value pair missing Key and colon!");
+		  }
+		  else if(inputStringStack.peek().equals(String.valueOf(':'))) {
 			  inputStringStack.pop();
-			  newKey = (String)inputStringStack.pop();
+			  if (inputStringStack.isEmpty() == true) {
+				  throw new IOException("Key-Value pair missing Key!");
+			  }
+			  else {
+				  if (inputStringStack.peek().equals(String.valueOf(','))) {
+						throw new IOException("Comma before colon!");
+				  }
+				  else if (inputStringStack.peek().equals(String.valueOf('{'))) {
+						throw new IOException("Opening brace before colon!");
+				  }
+				  else {
+					  newKey = (String)inputStringStack.pop();
+				  }
+			  }
 		  }
-		  else if(inputStringStack.peek().equals(String.valueOf('{'))) {
-				throw new IOException("Key-Value pair missing colon!");
-		  }
-		  else if(inputStringStack.peek().equals(String.valueOf(','))) {
+		  else {
 				throw new IOException("Key-Value pair missing colon!");
 		  }
 		  // if the value is a JSON object, setObject
@@ -184,7 +202,19 @@ final class MyJSONParser implements JSONParser {
 		  else {
 			  newJSON.setString(newKey, newValue);
 		  }
+		  // if the top of the stack is a comma, continue adding key-value pairs
+		  if (inputStringStack.isEmpty()) {
+			  throw new IOException("String missing opening brace!");
+		  }
+		  else if(inputStringStack.peek().equals(String.valueOf(','))) {
+			  inputStringStack.pop();
+		  }
+		  // if the top of the stack is an opening bracket, push complete object to stack
+		  else if(inputStringStack.peek().equals(String.valueOf('{'))) {
+			  objectComplete = true;
+			  inputStringStack.pop();
+			  inputStringStack.push(newJSON);
+		  }
 	  }
   }
-  
 }
