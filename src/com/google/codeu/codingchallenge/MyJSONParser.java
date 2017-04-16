@@ -67,7 +67,7 @@ final class MyJSONParser implements JSONParser {
 			case ',':
 				inputStringStack.push(String.valueOf(','));
 				break;
-			// if in quotes, add char to tempstring
+			// if in quotes, add current char to tempString
 			default:
 				if (withinQuotes == true) {
 					tempString += in.charAt(i);
@@ -75,6 +75,7 @@ final class MyJSONParser implements JSONParser {
 				}
 		}
 	}
+	// resulting MyJSON should be the last object in the stack
 	returnJSON = (MyJSON)inputStringStack.pop();
 	return returnJSON;
   }
@@ -94,21 +95,24 @@ final class MyJSONParser implements JSONParser {
 	  boolean objectComplete = false;
 	  
 	  while (objectComplete == false) {
-		  // the top of the stack should be a value
 		  if(inputStringStack.peek() instanceof String) {
+			  // if the top of the stack is an opening bracket, push complete object to stack
 			  if(inputStringStack.peek().equals(String.valueOf('{'))) {
 				  objectComplete = true;
 				  inputStringStack.pop();
 				  inputStringStack.push(newJSON);
 			  }
+			  // if the top of the stack is a comma, continue adding key-value pairs
 			  else if(inputStringStack.peek().equals(String.valueOf(','))) {
 				  inputStringStack.pop();
 				  newValue = (String)inputStringStack.pop();
 			  }
+			  // if the top of the stack is a regular string, create string-string pair
 			  else {
 				  newValue = (String)inputStringStack.pop();
 			  }
 		  }
+		  // if the top of the stack is an object, create string-object pair
 		  else {		  
 			  isObject = true;
 			  tempJSON = (MyJSON)inputStringStack.pop();
@@ -126,6 +130,19 @@ final class MyJSONParser implements JSONParser {
 			  newJSON.setString(newKey, newValue);
 		  }
 	  }
+	  // push the new JSON object back into the stack
 	  inputStringStack.push(newJSON);
+  }
+  
+  private void stringChecker(String checkString) {
+	  boolean previousBackslash = false;
+	  for (int i = 0; i < checkString.length(); i++) {
+		switch(checkString.charAt(i)) {
+			case '\\':
+				if (previousBackslash == true) {
+					previousBackslash = false;
+				}
+		}
+	  }
   }
 }
