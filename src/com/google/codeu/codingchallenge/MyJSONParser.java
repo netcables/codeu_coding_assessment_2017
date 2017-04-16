@@ -53,11 +53,11 @@ final class MyJSONParser implements JSONParser {
 				}
 			// if opening bracket, push into stack
 			case '{':
-				//inputStringStack.push('{');
+				inputStringStack.push('{');
 				break;
 			// if closing bracket, evaluate stack until '{'
 			case '}':
-				returnJSON = (MyJSON)evaluate();
+				inputStringStack.push((MyJSON)evaluate());
 				break;
 			// if colon, push into stack
 			case ':':
@@ -75,6 +75,7 @@ final class MyJSONParser implements JSONParser {
 				}
 		}
 	}
+	returnJSON = (MyJSON)inputStringStack.pop();
 	return returnJSON;
   }
   
@@ -86,35 +87,41 @@ final class MyJSONParser implements JSONParser {
 	  MyJSON tempJSON = new MyJSON();
 	  // temporary value string
 	  String newValue = new String();
-	  //temporary key string
+	  // temporary key string
 	  String newKey = new String();
-	  //check if value is object
+	  // check if value is object
 	  boolean isObject = false;
+	  // check if object is finished
+	  boolean objectComplete = false;
 	  
-	  if(inputStringStack.isEmpty()) {
-		  return newJSON;
-	  }
-	  // the top of the stack should be a value
-	  if(inputStringStack.peek() instanceof String) {
-		System.out.println(inputStringStack.peek());
-		  newValue = (String)inputStringStack.pop();
-	  }
-	  else {
-		  isObject = true;
-		  tempJSON = (MyJSON)inputStringStack.pop();
-	  }
-	  // the next item should be a colon
-	  if((char)inputStringStack.pop() == ':') {
-		System.out.println(inputStringStack.peek());
-		  newKey = (String)inputStringStack.pop();
-	  }
-	  // if the value is a JSON object, setObject
-	  if(isObject == true) {
-		  newJSON.setObject(newKey, tempJSON);
-	  }
-	  // otherwise, setString
-	  else {
-		  newJSON.setString(newKey, newValue);
+	  while (objectComplete == false) {
+		  // the top of the stack should be a value
+		  if(inputStringStack.peek() instanceof String) {
+		  	newValue = (String)inputStringStack.pop();
+		  }
+		  else {
+			  
+			  isObject = true;
+			  tempJSON = (MyJSON)inputStringStack.pop();
+		  }
+		  // the next item should be a colon
+		  if((char)inputStringStack.pop() == ':') {
+			  newKey = (String)inputStringStack.pop();
+		  }
+		  // if the value is a JSON object, setObject
+		  if(isObject == true) {
+			  newJSON.setObject(newKey, tempJSON);
+		  }
+		  // otherwise, setString
+		  else {
+			  newJSON.setString(newKey, newValue);
+		  }
+		  if((char)inputStringStack.pop() == '{') {
+			  objectComplete = true;
+		  }
+		  else if ((char)inputStringStack.pop() == ',') {
+			  
+		  }
 	  }
 	return newJSON;
   }
