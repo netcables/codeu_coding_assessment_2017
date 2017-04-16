@@ -31,48 +31,76 @@ final class MyJSONParser implements JSONParser {
 	// boolean used to check if within quotes
 	boolean withinQuotes = false;
 	
+	// boolean used to check escape characters
+	boolean escapeChar = false;
+	
 	// temporary string used to hold string values
 	String tempString = new String();
 	
-	// iterate through string
 	for (int i = 0; i < in.length(); i++) {
-		// if the character at index i is...
-		switch(in.charAt(i)) {
-			// if quotes, mark that scanning through quote
-			case '"':
-				if (withinQuotes == false) {
+		if (withinQuotes == false) {
+			// switch for text outside of quotes
+			switch(in.charAt(i)) {
+				case '"':
 					withinQuotes = true;
 					break;
-				}
-				// if already in quotes, push string into stack
-				else {
-					withinQuotes = false;
-				    inputStringStack.push(tempString);
-					tempString = new String();
+				// if opening bracket, push into stack
+				case '{':
+					inputStringStack.push(String.valueOf('{'));
 					break;
-				}
-			// if opening bracket, push into stack
-			case '{':
-				inputStringStack.push(String.valueOf('{'));
-				break;
-			// if closing bracket, evaluate stack until '{'
-			case '}':
-				evaluate();
-				break;
-			// if colon, push into stack
-			case ':':
-				inputStringStack.push(String.valueOf(':'));
-				break;
-			// if comma, push into stack
-			case ',':
-				inputStringStack.push(String.valueOf(','));
-				break;
-			// if in quotes, add current char to tempString
-			default:
-				if (withinQuotes == true) {
-					tempString += in.charAt(i);
+				// if closing bracket, evaluate stack until '{'
+				case '}':
+					evaluate();
 					break;
+				// if colon, push into stack
+				case ':':
+					inputStringStack.push(String.valueOf(':'));
+					break;
+				// if comma, push into stack
+				case ',':
+					inputStringStack.push(String.valueOf(','));
+					break;
+				case ' ':
+					break;
+				// there shouldn't be anything else outside of quotes
+				default:
+					  throw new RuntimeException("String formatted incorrectly!");
+			}
+		}
+		else {
+			if(escapeChar == false) {
+				// switch for text inside of quotes (no escaped characters)
+				switch(in.charAt(i)) {
+					case '"':
+						withinQuotes = false;
+						inputStringStack.push(tempString);
+						tempString = new String();
+						break;
+					case '\\':
+						tempString += in.charAt(i);
+						escapeChar = true;
+						break;
+					default:
+						if (withinQuotes == true) {
+							tempString += in.charAt(i);
+							break;
+						}
 				}
+			}
+			else {
+				// switch for text inside of quotes (escaped characters)
+				switch(in.charAt(i)) {
+					case '\"':
+					case '\\':
+					case 't':
+					case 'n':
+						tempString += in.charAt(i);
+						escapeChar = false;
+						break;
+					default:
+						  throw new RuntimeException("Character escaped incorrectly!");
+				}
+			}
 		}
 	}
 	// resulting MyJSON should be the last object in the stack
@@ -134,15 +162,4 @@ final class MyJSONParser implements JSONParser {
 	  inputStringStack.push(newJSON);
   }
   
-  private void stringChecker(String checkString) {
-	  boolean previousBackslash = false;
-	  for (int i = 0; i < checkString.length(); i++) {
-		switch(checkString.charAt(i)) {
-			case '\\':
-				if (previousBackslash == true) {
-					previousBackslash = false;
-				}
-		}
-	  }
-  }
 }
