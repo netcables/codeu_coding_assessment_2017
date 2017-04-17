@@ -42,7 +42,7 @@ final class MyJSONParser implements JSONParser {
 		if (withinQuotes == false) {
 			// switch for text outside of quotes
 			switch(in.charAt(i)) {
-				case '"':
+				case '\"':
 					withinQuotes = true;
 					break;
 				case '{':
