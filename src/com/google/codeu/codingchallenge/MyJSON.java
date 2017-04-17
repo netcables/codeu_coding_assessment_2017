@@ -29,13 +29,7 @@ final class MyJSON implements JSON {
 	
   @Override
   public JSON getObject(String name) {
-	  // if the object isn't in this object, state that it wasn't found
-	  if (objectMap.containsKey(name)) {
-		  return objectMap.get(name);
-	  }
-	  else {
-		  throw new NullPointerException("The object \"" + name + "\" was not found!");
-	  }
+	  return objectMap.get(name);
   }
 
   @Override
@@ -54,13 +48,8 @@ final class MyJSON implements JSON {
 
   @Override
   public String getString(String name) {
-	  // if the string isn't in this object, state that it wasn't found
-	  if (stringMap.containsKey(name)) {
-		  return stringMap.get(name);
-	  }
-	  else {
-		  throw new NullPointerException("The string \"" + name + "\" was not found!");
-	  }
+	  return stringMap.get(name);
+
   }
 
   @Override
