@@ -65,6 +65,44 @@ final class TestMain {
         Asserts.isEqual("doe", nameObj.getString("last"));
       }
     });
+    
+    tests.add("String Collection", new Test() {
+        @Override
+        public void run(JSONFactory factory) throws Exception {
+          final JSONParser parser = factory.parser();
+          final JSON obj = parser.parse("{ \"one\":\"john doe\", \"two\":\"jane doe\" }");
+          
+          final Collection<String> strings = new HashSet<>();
+          obj.getStrings(strings);
+
+          Asserts.isEqual(strings.size(), 2); 
+       }
+      });
+    
+    tests.add("Object Collection", new Test() {
+        @Override
+        public void run(JSONFactory factory) throws Exception {
+
+          final JSONParser parser = factory.parser();
+          final JSON obj = parser.parse("{ \"one\":{\"first\":\"john\", \"last\":\"doe\" },  \"two\":{\"first\":\"jane\", \"last\":\"doe\" }}");
+
+          final Collection<String> objects = new HashSet<>();
+          obj.getObjects(objects);
+
+          Asserts.isEqual(objects.size(), 2);
+        }
+      });
+    
+    tests.add("Escaped Characters", new Test() {
+        @Override
+        public void run(JSONFactory factory) throws Exception {
+          final JSONParser parser = factory.parser();
+          final JSON obj = parser.parse("{ \"Test t\":\"\\t\", \"Test n\":\"\\n\" }");
+
+          Asserts.isEqual("\\t", obj.getString("Test t"));
+          Asserts.isEqual("\\n", obj.getString("Test n"));
+       }
+      });
 
     tests.run(new JSONFactory(){
       @Override
