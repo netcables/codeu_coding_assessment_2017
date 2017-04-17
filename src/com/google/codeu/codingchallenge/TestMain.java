@@ -103,6 +103,20 @@ final class TestMain {
           Asserts.isEqual("\\n", obj.getString("Test n"));
        }
       });
+    
+    tests.add("Nested Objects", new Test() {
+        @Override
+        public void run(JSONFactory factory) throws Exception {
+
+          final JSONParser parser = factory.parser();
+          final JSON obj = parser.parse("{ \"first\":{\"second\":{\"third\":\"nestedString\"}}}");
+
+          final JSON nameObj1 = obj.getObject("first");
+          final JSON nameObj2 = nameObj1.getObject("second");
+          
+          Asserts.isEqual("nestedString", nameObj2.getString("third"));
+        }
+      });
 
     tests.run(new JSONFactory(){
       @Override
